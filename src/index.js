@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import getConfig from './config.js';
 import * as nearAPI from 'near-api-js';
+import './polyfills';
 
 // Initializing contract
 async function initContract() {
