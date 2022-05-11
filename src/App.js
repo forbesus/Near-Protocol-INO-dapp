@@ -1,25 +1,62 @@
-import logo from './logo.svg';
-import './App.css';
+import 'regenerator-runtime/runtime';
+import React from 'react';
+import PropTypes from 'prop-types';
 
-function App() {
+const App = ({ contract, currentUser, nearConfig, wallet }) => {
+  
+  const signIn = () => {
+    wallet.requestSignIn(
+      nearConfig.contractName,
+      'NEAR ToDo List'
+    );
+  };
+
+  const signOut = () => {
+    wallet.signOut();
+    window.location.replace(window.location.origin + window.location.pathname);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <h1>NEAR Todos CRUD App</h1>
+      { currentUser
+          ? <div>
+              <h2>
+                Account ID: {currentUser.accountId}
+                {" "}
+                <button onClick={signOut}>Log out</button>
+              </h2>
+            </div>
+          : 
+          <div>
+            Sign In To Use The App: 
+            {" "}
+            <button onClick={signIn}>Log in</button>
+          </div>
+        }
+    </>
   );
 }
+
+App.propTypes = {
+  contract: PropTypes.shape({
+    create: PropTypes.func.isRequired,
+    get: PropTypes.func.isRequired,
+    update: PropTypes.func.isRequired,
+    del: PropTypes.func.isRequired,
+  }).isRequired,
+  currentUser: PropTypes.shape({
+    accountId: PropTypes.string.isRequired,
+    balance: PropTypes.string.isRequired
+  }),
+  nearConfig: PropTypes.shape({
+    contractName: PropTypes.string.isRequired
+  }).isRequired,
+  wallet: PropTypes.shape({
+    requestSignIn: PropTypes.func.isRequired,
+    signOut: PropTypes.func.isRequired
+  }).isRequired
+};
+
 
 export default App;
