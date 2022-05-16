@@ -3,85 +3,98 @@ import React, { useEffect, useState } from "react";
 
 import PropTypes from 'prop-types';
 
-import { Nav, Navbar, Container, Row, Card, Alert } from "react-bootstrap";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+
+import { Header } from './components/Header';
+import { Home } from './components/Home';
+import { AddNewCollection } from './components/AddNewCollection';
+
+import { Container, Row } from "react-bootstrap";
 
 export default function App ({ contract, currentUser, nearConfig, wallet }) {
-  const [userHasNFT, setuserHasNFT] = useState(false);
-  
-  const signIn = () => {
-    wallet.requestSignIn(
-      nearConfig.contractName
-    );
-  };
-
-  const signOut = () => {
-    wallet.signOut();
-    window.location.replace(window.location.origin + window.location.pathname);
-  };
+  const [isSignedIn, setIsSignedIn] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(true);
+  const [contractId, setContractId] = useState("");
+  const [accountId, setAccountId] = useState("");
 
   useEffect(() => {
-    const receivedNFT = async () => {
+    if (!contractId || !accountId) return;
 
-      if (currentUser.accountId !== "") {
+    if(contractId === accountId) {
+      setIsAdmin(true);
+    } else {
+      setIsAdmin(false);
+    }
+  }, [contractId, accountId]);
+  
+  useEffect(() => {
+    if(wallet.isSignedIn()) {
+      setIsSignedIn(true);
+    } else {
+      setIsSignedIn(false);
+    }
+  }, [wallet]);
 
-        console.log(await contract.nft_metadata());
+  useEffect(() => {
+    setContractId(nearConfig.contractName);
+  }, [nearConfig]);
 
-        // setuserHasNFT(
-        //   await window.contract.check_token({
-        //     id: `${window.accountId}-go-team-token`,
-        //   })
-        // );
-
+  useEffect(() => {
+    if (currentUser && currentUser.accountId !== "") {
+      setAccountId(currentUser.accountId);
+    } else {
+      setAccountId("");
+    }
+  }, [currentUser]);
+  
+  useEffect(() => {
+    (async () => {
+      if (accountId === "") {
+        return;
       }
 
-    };
+      console.log(await contract.nft_metadata());
 
-    receivedNFT();
-  }, []);
+    })();
+  }, [contract, accountId]);
 
   return (
-    <React.Fragment>
-      {" "}
-      <Navbar bg='dark' variant='dark'>
-        <Container>
-          <Navbar.Brand href='#home'>
-            NEAR Protocol
-          </Navbar.Brand>
-          <Navbar.Toggle aria-controls='responsive-navbar-nav' />
-          <Navbar.Collapse id='responsive-navbar-nav'>
-            <Nav className='me-auto'></Nav>
-            <Nav>
-              <Nav.Link
-                onClick={() => wallet.isSignedIn() ? signOut() : signIn()}
-              >
-                {wallet.isSignedIn()
-                  ? currentUser.accountId
-                  : "Login"}
-              </Nav.Link>{" "}
-            </Nav>
-          </Navbar.Collapse>
-        </Container>
-      </Navbar>
+    <BrowserRouter>
+      <Header 
+        isSignedIn = {isSignedIn}
+        accountId = {accountId}
+        wallet = {wallet}
+        contractId = {contractId}
+        isAdmin = {isAdmin}
+      />
+      
       <Container style={{ marginTop: "3vh" }}>
-        {" "}
-        <Row>
-          <Alert>
-            Hello! We are going to mint an NFT and have it appear in your
-            wallet! Sign in, mint your nft and head over to{" "}
-            <a href='https://wallet.testnet.near.org/'>
-              wallet.testnet.near.org
-            </a>{" "}
-            to see your new "Go Team" NFT!
-          </Alert>
-        </Row>
-        <Row>
-          {/* <InfoBubble /> */}
-        </Row>
-        <Row style={{ marginTop: "3vh" }}>
-          {/* <MintingTool userNFTStatus={userHasNFT} /> */}
-        </Row>
+        <Routes>
+          <Route 
+            exact
+            path="/" 
+            element=
+              {<Home 
+                isSignedIn = {isSignedIn}
+              />} 
+          />
+          <Route 
+            path="/new" 
+            element =
+              {isAdmin ? 
+                <AddNewCollection/>
+                : <Navigate  to="/" />
+              } 
+          />
+          <Route
+            path="*"
+            element={
+              <Navigate  to="/" />
+            }
+          />
+        </Routes>
       </Container>
-    </React.Fragment>
+    </BrowserRouter>
   );
 }
 
