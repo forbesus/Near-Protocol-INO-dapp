@@ -10,8 +10,6 @@ export const Header = (props) => {
         isAdmin
     } = props;
 
-    console.log(isAdmin);
-
     const signIn = () => {
         wallet.requestSignIn(
             contractId,

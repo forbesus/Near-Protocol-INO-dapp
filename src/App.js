@@ -53,7 +53,7 @@ export default function App ({ contract, currentUser, nearConfig, wallet }) {
         return;
       }
 
-      console.log(await contract.nft_metadata());
+      // console.log(await contract.nft_metadata());
 
     })();
   }, [contract, accountId]);
@@ -76,13 +76,17 @@ export default function App ({ contract, currentUser, nearConfig, wallet }) {
             element=
               {<Home 
                 isSignedIn = {isSignedIn}
+                wallet = {wallet}
               />} 
           />
           <Route 
             path="/new" 
             element =
               {isAdmin ? 
-                <AddNewCollection/>
+                <AddNewCollection
+                  wallet = {wallet}
+                  nearConfig = {nearConfig}
+                />
                 : <Navigate  to="/" />
               } 
           />
