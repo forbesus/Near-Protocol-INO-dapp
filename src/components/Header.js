@@ -38,9 +38,7 @@ export const Header = (props) => {
                     <Nav>
                         {
                             isAdmin && 
-                            <Nav.Link href="/new">
-                                Add New Collection
-                            </Nav.Link>
+                            <Link to="/new" style={{padding: '0.5rem'}}>Add New Collection</Link>
                         }
                         <Nav.Link>
                             { isSignedIn ? accountId : ""}

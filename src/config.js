@@ -1,4 +1,4 @@
-const CONTRACT_NAME = process.env.CONTRACT_NAME || 'ninjadev.testnet';
+const CONTRACT_NAME = process.env.CONTRACT_NAME || 'daonation.testnet';
 
 function getConfig(env) {
   switch(env) {

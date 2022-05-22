@@ -13,7 +13,7 @@ import { Container, Row } from "react-bootstrap";
 
 export default function App ({ contract, currentUser, nearConfig, wallet }) {
   const [isSignedIn, setIsSignedIn] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [contractId, setContractId] = useState("");
   const [accountId, setAccountId] = useState("");
 
@@ -77,6 +77,7 @@ export default function App ({ contract, currentUser, nearConfig, wallet }) {
               {<Home 
                 isSignedIn = {isSignedIn}
                 wallet = {wallet}
+                contract = {contract}
               />} 
           />
           <Route 
@@ -104,7 +105,7 @@ export default function App ({ contract, currentUser, nearConfig, wallet }) {
 
 App.propTypes = {
   contract: PropTypes.shape({
-    nft_metadata: PropTypes.func.isRequired,
+    get_collection: PropTypes.func.isRequired,
   }).isRequired,
   currentUser: PropTypes.shape({
     accountId: PropTypes.string.isRequired,
